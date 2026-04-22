@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/BeastBoy2209/google-forms-ai-autofiller/main/assets/logo.png" alt="Logo" width="120" height="120" />
+<img src="https://raw.githubusercontent.com/BeastBoy2209/google-forms-ai-autofiller/main/Icon.png" alt="Logo" width="120" height="120" />
 
 # Google Forms AI AutoFiller
 
