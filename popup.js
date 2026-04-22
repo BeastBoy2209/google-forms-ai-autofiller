@@ -1,7 +1,14 @@
 const ALLOWED_MODELS = {
   openai: ["gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano"],
-  anthropic: ["claude-sonnet-4-6", "claude-haiku-4-5-20251001"]
+  anthropic: ["claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
+  gemini: [
+    "gemini-3.1-pro-preview",
+    "gemini-3-flash-preview",
+    "gemini-3.1-flash-lite-preview"
+  ]
 };
+
+const ALLOWED_PROVIDERS = ["openai", "anthropic", "gemini"];
 
 const DEFAULT_SETTINGS = {
   provider: "openai",
@@ -9,6 +16,8 @@ const DEFAULT_SETTINGS = {
   openaiModel: "gpt-5.4",
   anthropicApiKey: "",
   anthropicModel: "claude-sonnet-4-6",
+  geminiApiKey: "",
+  geminiModel: "gemini-3-flash-preview",
   userContext: "",
   extraInstructions: "",
   temperature: 0.2
@@ -26,7 +35,7 @@ async function init() {
   const settings = { ...DEFAULT_SETTINGS, ...savedSettings };
 
   applySettings(settings);
-  updateProviderVisibility(settings.provider);
+  updateProviderVisibility(normalizeProvider(settings.provider));
   setStatus("Настройки загружены.");
 }
 
@@ -36,11 +45,14 @@ function bindUiElements() {
   ui.openaiModel = document.getElementById("openaiModel");
   ui.anthropicApiKey = document.getElementById("anthropicApiKey");
   ui.anthropicModel = document.getElementById("anthropicModel");
+  ui.geminiApiKey = document.getElementById("geminiApiKey");
+  ui.geminiModel = document.getElementById("geminiModel");
   ui.userContext = document.getElementById("userContext");
   ui.extraInstructions = document.getElementById("extraInstructions");
   ui.temperature = document.getElementById("temperature");
   ui.openaiBlock = document.getElementById("openaiBlock");
   ui.anthropicBlock = document.getElementById("anthropicBlock");
+  ui.geminiBlock = document.getElementById("geminiBlock");
   ui.saveButton = document.getElementById("saveButton");
   ui.fillButton = document.getElementById("fillButton");
   ui.status = document.getElementById("status");
@@ -100,11 +112,13 @@ function bindEvents() {
 
 function readSettingsFromForm() {
   return {
-    provider: ui.provider.value,
+    provider: normalizeProvider(ui.provider.value),
     openaiApiKey: ui.openaiApiKey.value.trim(),
     openaiModel: normalizeModelValue("openai", ui.openaiModel.value),
     anthropicApiKey: ui.anthropicApiKey.value.trim(),
     anthropicModel: normalizeModelValue("anthropic", ui.anthropicModel.value),
+    geminiApiKey: ui.geminiApiKey.value.trim(),
+    geminiModel: normalizeModelValue("gemini", ui.geminiModel.value),
     userContext: ui.userContext.value.trim(),
     extraInstructions: ui.extraInstructions.value.trim(),
     temperature: clampTemperature(ui.temperature.value)
@@ -124,6 +138,10 @@ function validateSettings(settings, strict) {
     throw new Error("Выбрана недоступная Anthropic модель.");
   }
 
+  if (!isAllowedModel("gemini", settings.geminiModel)) {
+    throw new Error("Выбрана недоступная Gemini модель.");
+  }
+
   if (strict && settings.provider === "openai" && !settings.openaiApiKey) {
     throw new Error("Для OpenAI укажите API key.");
   }
@@ -131,23 +149,29 @@ function validateSettings(settings, strict) {
   if (strict && settings.provider === "anthropic" && !settings.anthropicApiKey) {
     throw new Error("Для Anthropic укажите API key.");
   }
+
+  if (strict && settings.provider === "gemini" && !settings.geminiApiKey) {
+    throw new Error("Для Gemini укажите API key.");
+  }
 }
 
 function applySettings(settings) {
-  ui.provider.value = settings.provider;
+  ui.provider.value = normalizeProvider(settings.provider);
   ui.openaiApiKey.value = settings.openaiApiKey;
   setSelectValue(ui.openaiModel, normalizeModelValue("openai", settings.openaiModel));
   ui.anthropicApiKey.value = settings.anthropicApiKey;
   setSelectValue(ui.anthropicModel, normalizeModelValue("anthropic", settings.anthropicModel));
+  ui.geminiApiKey.value = settings.geminiApiKey;
+  setSelectValue(ui.geminiModel, normalizeModelValue("gemini", settings.geminiModel));
   ui.userContext.value = settings.userContext;
   ui.extraInstructions.value = settings.extraInstructions;
   ui.temperature.value = String(settings.temperature);
 }
 
 function updateProviderVisibility(provider) {
-  const openaiVisible = provider === "openai";
-  ui.openaiBlock.style.display = openaiVisible ? "block" : "none";
-  ui.anthropicBlock.style.display = openaiVisible ? "none" : "block";
+  ui.openaiBlock.style.display = provider === "openai" ? "block" : "none";
+  ui.anthropicBlock.style.display = provider === "anthropic" ? "block" : "none";
+  ui.geminiBlock.style.display = provider === "gemini" ? "block" : "none";
 }
 
 function setStatus(message, state = "") {
@@ -164,6 +188,7 @@ function buildRuntimeSettings(settings) {
     provider: settings.provider,
     openaiModel: settings.openaiModel,
     anthropicModel: settings.anthropicModel,
+    geminiModel: settings.geminiModel,
     userContext: settings.userContext,
     extraInstructions: settings.extraInstructions,
     temperature: settings.temperature
@@ -194,7 +219,15 @@ function getDefaultModelForProvider(provider) {
     return DEFAULT_SETTINGS.anthropicModel;
   }
 
+  if (provider === "gemini") {
+    return DEFAULT_SETTINGS.geminiModel;
+  }
+
   return DEFAULT_SETTINGS.openaiModel;
+}
+
+function normalizeProvider(provider) {
+  return ALLOWED_PROVIDERS.includes(provider) ? provider : DEFAULT_SETTINGS.provider;
 }
 
 function clampTemperature(value) {

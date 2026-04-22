@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Google Forms AI AutoFiller",
   "version": "1.0.0",
-  "description": "Автозаполнение Google Forms через OpenAI или Anthropic API",
+  "description": "Автозаполнение Google Forms через OpenAI, Anthropic или Google Gemini API",
   "permissions": [
     "storage",
     "tabs"
@@ -10,7 +10,8 @@
   "host_permissions": [
     "https://docs.google.com/forms/*",
     "https://api.openai.com/*",
-    "https://api.anthropic.com/*"
+    "https://api.anthropic.com/*",
+    "https://generativelanguage.googleapis.com/*"
   ],
   "background": {
     "service_worker": "service-worker.js"

@@ -2,6 +2,8 @@
 
 <img src="https://raw.githubusercontent.com/BeastBoy2209/google-forms-ai-autofiller/main/Icon.png" alt="Logo" width="120" height="120" />
 
+<img src="./gemini-icon.svg" alt="Gemini API Icon" width="56" height="56" />
+
 # Google Forms AI AutoFiller
 
 **A Chrome Extension that automatically fills Google Forms using AI**
@@ -9,6 +11,7 @@
 [![Chrome Web Store](https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chrome.google.com/webstore)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--5.4-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
 [![Anthropic](https://img.shields.io/badge/Anthropic-Claude-CC785C?style=for-the-badge&logo=anthropic&logoColor=white)](https://anthropic.com)
+[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-2.5-1a73e8?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/gemini-api)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](./LICENSE)
 [![Ko-Fi](https://img.shields.io/badge/Ko--fi-Donate-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white)](https://ko-fi.com/beastboy2209)
 
@@ -20,7 +23,7 @@
 
 ## ✨ Key Features
 
-- 🤖 **Dual AI Provider Support** — works with both OpenAI and Anthropic APIs
+- 🤖 **Triple AI Provider Support** — works with OpenAI, Anthropic, and Google Gemini APIs
 - ⚡ **One-Click Autofill** — fills your entire Google Form in seconds
 - 🧠 **Context-Aware Answers** — provide personal context to get smarter, personalized responses
 - 🎯 **Smart Question Detection** — automatically identifies question types and available options
@@ -35,7 +38,10 @@
 | OpenAI | `gpt-5.4-mini` | Faster |
 | OpenAI | `gpt-5.4-nano` | Budget-friendly |
 | **Anthropic** | `claude-sonnet-4-6` | ⭐ Recommended |
-| Anthropic | `claude-haiku-latest` | Most affordable |
+| Anthropic | `claude-haiku-4-5-20251001` | Most affordable |
+| **Google Gemini** | `gemini-3.1-pro-preview` | Advanced intelligence |
+| Google Gemini | `gemini-3-flash-preview` | ⭐ Recommended (speed/quality) |
+| Google Gemini | `gemini-3.1-flash-lite-preview` | Budget-friendly |
 
 ## 📋 Supported Question Types
 
@@ -66,7 +72,7 @@
 
 1. **Open** any Google Form (in fill-out mode, not edit mode)
 2. **Click** the extension icon in your Chrome toolbar
-3. **Select** your AI provider: `OpenAI` or `Anthropic`
+3. **Select** your AI provider: `OpenAI`, `Anthropic`, or `Google Gemini`
 4. **Enter** your API key and choose a model
 5. *(Optional)* **Add context** about yourself to improve answer quality
 6. **Click** `Fill Form` and watch the magic happen ✨
@@ -95,7 +101,7 @@ I prefer backend development and have experience with Docker and FastAPI.
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                       Service Worker                            │
-│   • Calls OpenAI or Anthropic API                               │
+│   • Calls OpenAI, Anthropic, or Google Gemini API               │
 │   • Receives JSON response with answers                         │
 │   • Applies post-processing (enforces selection limits)         │
 └───────────────────────────┬─────────────────────────────────────┘
@@ -145,11 +151,11 @@ The following JSON structure is sent to the AI model:
 
 - **DOM Fragility** — Google Forms may update their HTML structure; selectors may need updating if the extension breaks
 - **Unsupported Question Types** — dates, times, matrix questions, and file uploads are not yet supported
-- **API Costs** — using this extension consumes API credits from your OpenAI or Anthropic account
+- **API Costs** — using this extension consumes API credits from your OpenAI, Anthropic, or Google Gemini account
 
 ## 🔐 Security
 
-- API keys are stored in `chrome.storage.sync` and never transmitted to any server other than OpenAI/Anthropic
+- API keys are stored in `chrome.storage.sync` and never transmitted to any server other than OpenAI, Anthropic, or Google Gemini
 - Do **not** include sensitive personal data in the context field unless necessary
 - It is recommended to use API keys with **budget limits** and **restricted permissions**
 

@@ -28,6 +28,7 @@
           <select id="provider">
             <option value="openai">OpenAI (ChatGPT API)</option>
             <option value="anthropic">Anthropic (Claude API)</option>
+            <option value="gemini">Google Gemini API</option>
           </select>
         </label>
       </section>
@@ -71,6 +72,27 @@
           </select>
         </label>
         <p class="model-note">If you want to save money, choose Haiku.</p>
+      </section>
+
+      <section class="provider-block" id="geminiBlock">
+        <div class="provider-head">
+          <h2>Google Gemini</h2>
+          <span class="badge">Gemini 3.1</span>
+        </div>
+
+        <label class="field">
+          <span>API key</span>
+          <input id="geminiApiKey" type="password" placeholder="AIza..." />
+        </label>
+        <label class="field">
+          <span>Model</span>
+          <select id="geminiModel">
+            <option value="gemini-3.1-pro-preview">gemini-3.1-pro-preview (advanced intelligence)</option>
+            <option value="gemini-3-flash-preview">gemini-3-flash-preview (strong speed/quality)</option>
+            <option value="gemini-3.1-flash-lite-preview">gemini-3.1-flash-lite-preview (budget-friendly)</option>
+          </select>
+        </label>
+        <p class="model-note">Three balanced options: best quality, medium, and cheapest.</p>
       </section>
 
       <section class="panel">

@@ -1,11 +1,17 @@
 const ALLOWED_MODELS = {
   openai: ["gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano"],
-  anthropic: ["claude-sonnet-4-6", "claude-haiku-4-5-20251001"]
+  anthropic: ["claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
+  gemini: [
+    "gemini-3.1-pro-preview",
+    "gemini-3-flash-preview",
+    "gemini-3.1-flash-lite-preview"
+  ]
 };
 
 const DEFAULT_MODELS = {
   openai: "gpt-5.4",
-  anthropic: "claude-sonnet-4-6"
+  anthropic: "claude-sonnet-4-6",
+  gemini: "gemini-3-flash-preview"
 };
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -31,9 +37,11 @@ async function handleAnswerGeneration(payload) {
     ...storedSettings,
     ...incomingSettings
   };
-  settings.provider = settings.provider === "anthropic" ? "anthropic" : "openai";
+  const provider = String(settings.provider || "").toLowerCase();
+  settings.provider = ["openai", "anthropic", "gemini"].includes(provider) ? provider : "openai";
   settings.openaiModel = normalizeModelValue("openai", settings.openaiModel);
   settings.anthropicModel = normalizeModelValue("anthropic", settings.anthropicModel);
+  settings.geminiModel = normalizeModelValue("gemini", settings.geminiModel);
 
   const questions = Array.isArray(payload?.questions) ? payload.questions : [];
 
@@ -62,8 +70,16 @@ async function handleAnswerGeneration(payload) {
       systemPrompt,
       userPrompt
     });
+  } else if (settings.provider === "gemini") {
+    responseJson = await callGemini({
+      apiKey: settings.geminiApiKey,
+      model: settings.geminiModel,
+      temperature: settings.temperature,
+      systemPrompt,
+      userPrompt
+    });
   } else {
-    throw new Error("Провайдер не выбран. Выберите OpenAI или Anthropic.");
+    throw new Error("Провайдер не выбран. Выберите OpenAI, Anthropic или Gemini.");
   }
 
   return normalizeAnswers(responseJson, questions);
@@ -76,6 +92,8 @@ function getStoredSettings() {
     "openaiModel",
     "anthropicApiKey",
     "anthropicModel",
+    "geminiApiKey",
+    "geminiModel",
     "userContext",
     "extraInstructions",
     "temperature"
@@ -201,6 +219,64 @@ async function callAnthropic({ apiKey, model, temperature, systemPrompt, userPro
 
   if (!content) {
     throw new Error("Anthropic API вернул пустой ответ.");
+  }
+
+  return parseResponseJson(content);
+}
+
+async function callGemini({ apiKey, model, temperature, systemPrompt, userPrompt }) {
+  if (!apiKey) {
+    throw new Error("Не указан Gemini API key.");
+  }
+
+  const modelName = normalizeModelValue("gemini", model);
+  const endpoint =
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}:generateContent` +
+    `?key=${encodeURIComponent(apiKey)}`;
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      systemInstruction: {
+        parts: [{ text: systemPrompt }]
+      },
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: userPrompt }]
+        }
+      ],
+      generationConfig: {
+        temperature: Number.isFinite(Number(temperature)) ? Number(temperature) : 0.2,
+        responseMimeType: "application/json"
+      }
+    })
+  });
+
+  const body = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(extractApiError(body, "Google Gemini API вернул ошибку."));
+  }
+
+  const content = Array.isArray(body?.candidates)
+    ? body.candidates
+        .flatMap((candidate) => candidate?.content?.parts || [])
+        .map((part) => part?.text || "")
+        .filter(Boolean)
+        .join("\n")
+    : "";
+
+  if (!content) {
+    const blockedReason = body?.promptFeedback?.blockReason;
+    if (blockedReason) {
+      throw new Error(`Google Gemini отклонил запрос: ${blockedReason}.`);
+    }
+
+    throw new Error("Google Gemini API вернул пустой ответ.");
   }
 
   return parseResponseJson(content);
