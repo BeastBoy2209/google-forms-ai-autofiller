@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Google Forms AI AutoFiller",
+  "version": "1.0.0",
+  "description": "Автозаполнение Google Forms через OpenAI или Anthropic API",
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://docs.google.com/forms/*",
+    "https://api.openai.com/*",
+    "https://api.anthropic.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "Forms AI AutoFiller",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "Icon.png",
+      "32": "Icon.png",
+      "48": "Icon.png",
+      "128": "Icon.png"
+    }
+  },
+  "icons": {
+    "16": "Icon.png",
+    "32": "Icon.png",
+    "48": "Icon.png",
+    "128": "Icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://docs.google.com/forms/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
