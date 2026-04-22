@@ -9,7 +9,7 @@
 [![Chrome Web Store](https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chrome.google.com/webstore)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--5.4-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
 [![Anthropic](https://img.shields.io/badge/Anthropic-Claude-CC785C?style=for-the-badge&logo=anthropic&logoColor=white)](https://anthropic.com)
-[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-2.5-1a73e8?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/gemini-api)
+[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-3.1_pro-1a73e8?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/gemini-api)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](./LICENSE)
 [![Ko-Fi](https://img.shields.io/badge/Ko--fi-Donate-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white)](https://ko-fi.com/beastboy2209)
 
