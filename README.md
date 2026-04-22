@@ -2,8 +2,6 @@
 
 <img src="https://raw.githubusercontent.com/BeastBoy2209/google-forms-ai-autofiller/main/Icon.png" alt="Logo" width="120" height="120" />
 
-<img src="./gemini-icon.svg" alt="Gemini API Icon" width="56" height="56" />
-
 # Google Forms AI AutoFiller
 
 **A Chrome Extension that automatically fills Google Forms using AI**
